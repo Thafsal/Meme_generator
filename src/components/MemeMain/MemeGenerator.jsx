@@ -1,6 +1,6 @@
 import React from "react";
 import "./MemeGenerator.css";
-import { useState, useEffect} from "react";
+import { useState, useEffect, useRef } from "react";
 import Header from "../Header/Header";
 
 function MemeGenerator(ref) {
@@ -10,6 +10,7 @@ function MemeGenerator(ref) {
     "https://i.imgflip.com/7l7t8m.jpg"
   );
   const [allImages, setAllImages] = useState([]);
+  const memeImgRef = useRef(null);
 
   useEffect(() => {
     fetch("https://api.imgflip.com/get_memes")
@@ -35,17 +36,51 @@ function MemeGenerator(ref) {
     const randomMemeImg = allImages[randomNum].url;
     setRandomImg(randomMemeImg);
   };
-  const resetText = () =>{
-    setTopText(" ")
-    setBottomText(" ")
-    console.log("Button clicked")
-  }
+  const resetText = () => {
+    setTopText(" ");
+    setBottomText(" ");
+    console.log("Button clicked");
+  };
+
+  const handleDownload = () => {
+    if (memeImgRef.current) {
+      const canvas = document.createElement("canvas");
+      const context = canvas.getContext("2d");
+      const image = new Image();
+      image.crossOrigin = "anonymous";
+
+      image.onload = () => {
+        canvas.width = image.width;
+        canvas.height = image.height;
+        context.drawImage(image, 0, 0);
+        context.font = "35px Arial";
+        context.fillStyle = "white";
+        context.strokeStyle = "black";
+        context.lineWidth = 1;
+        context.textAlign = "center";
+
+        const textX = canvas.width / 2;
+        const textY = 50;
+
+        context.fillText(topText, textX, textY);
+        context.strokeText(topText, textX, textY);
+        context.fillText(bottomText, textX, canvas.height - 20);
+        context.strokeText(bottomText, textX, canvas.height - 20);
+
+        const dataURL = canvas.toDataURL("image/png");
+        const link = document.createElement("a");
+        link.href = dataURL;
+        link.download = `${topText}_meme.png`;
+        link.click();
+      };
+
+      image.src = memeImgRef.current.src;
+    }
+  };
 
   return (
     <main>
-      <Header 
-        buttonReset={resetText}
-      />
+      <Header buttonReset={resetText} downloadBtn={handleDownload} />
       <form onSubmit={handleSubmit} className="Meme-form">
         <label htmlFor="topText" className="Meme-textarea">
           <input
@@ -68,7 +103,12 @@ function MemeGenerator(ref) {
         <button className="Meme-btn">Generate a new image</button>
       </form>
       <div className="Meme-img-container">
-        <img src={randomImg} alt="random-Img" className="Meme-img" />
+        <img
+          src={randomImg}
+          alt="random-Img"
+          className="Meme-img"
+          ref={memeImgRef}
+        />
         <p className="meme-imgText-top">{topText}</p>
         <p className="meme-imgText-bottom">{bottomText}</p>
       </div>

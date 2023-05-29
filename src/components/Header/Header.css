@@ -22,6 +22,17 @@
   font-weight: bolder;
   color: rgba(132, 132, 131, 0.861);
 }
+.Header-dwnld {
+  margin-right: 15px;
+  height: 50px;
+  width: 120px;
+  background-color: rgb(15, 114, 236);
+  color: rgb(255, 255, 255);
+  border: none;
+  cursor: pointer;
+  border-radius: 10px;
+  font-size: large;
+}
 .Header-btn {
   margin-left: auto;
   margin-right: 15px;
@@ -53,7 +64,8 @@
     font-size: 20px;
   }
 
-  .Header-btn {
+  .Header-btn,
+  .Header-dwnld {
     height: 60px;
     width: 140px;
     margin-right: 20px;
