@@ -1,59 +1,79 @@
 import React from "react";
 import "./MemeGenerator.css";
-import { useState } from "react";
+import { useState, useEffect} from "react";
+import Header from "../Header/Header";
 
-function MemeGenerator() {
-  const [imageSrc, SetImageSrc] = useState("");
-  const [imageName, SetImageName] = useState("");
-  const [firstName, SetFirstName] = useState("");
-  const [laststName, SetLaststName] = useState("");
+function MemeGenerator(ref) {
+  const [topText, setTopText] = useState("");
+  const [bottomText, setBottomText] = useState("");
+  const [randomImg, setRandomImg] = useState(
+    "https://i.imgflip.com/7l7t8m.jpg"
+  );
+  const [allImages, setAllImages] = useState([]);
 
-  const handleGenerateImg = async () => {
-    try {
-      const response = await fetch("https://api.imgflip.com/get_memes");
-      const data = await response.json();
-      const randomImg = data.data.memes[Math.floor(Math.random() * data.data.memes.length)]
-      SetImageSrc(randomImg.url);
-      SetImageName(randomImg.name);
-    } 
-    catch (err) {
-      console.log(err);
-    }
-    }
-    const handleFirstMsg = (e)=> {
-        SetFirstName(e.target.value)
-    }
-    const handleSecondMsg = (e)=> {
-        SetLaststName(e.target.value)
-    }
+  useEffect(() => {
+    fetch("https://api.imgflip.com/get_memes")
+      .then((response) => response.json())
+      .then((response) => {
+        const { memes } = response.data;
+        setAllImages(memes);
+      });
+  }, []);
 
-    return (
-      <main>
-        <form action="" className="Meme-form">
+  const handleChange = (event) => {
+    const { name, value } = event.target;
+    if (name === "topText") {
+      setTopText(value);
+    } else if (name === "bottomText") {
+      setBottomText(value);
+    }
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const randomNum = Math.floor(Math.random() * allImages.length);
+    const randomMemeImg = allImages[randomNum].url;
+    setRandomImg(randomMemeImg);
+  };
+  const resetText = () =>{
+    setTopText(" ")
+    setBottomText(" ")
+    console.log("Button clicked")
+  }
+
+  return (
+    <main>
+      <Header 
+        buttonReset={resetText}
+      />
+      <form onSubmit={handleSubmit} className="Meme-form">
+        <label htmlFor="topText">
           <input
-            type="text"
             className="Meme-textarea"
-            placeholder="First Message"
-            value={firstName}
-            onChange={handleFirstMsg}
+            type="text"
+            value={topText}
+            name="topText"
+            onChange={handleChange}
           />
+        </label>
+        <label htmlFor="bottomText">
           <input
-            type="text"
             className="Meme-textarea"
-            placeholder="Second Message"
-            value={laststName}
-            onChange={handleSecondMsg}
+            type="text"
+            value={bottomText}
+            name="bottomText"
+            onChange={handleChange}
           />
-          <button className="Meme-btn" onClick={handleGenerateImg}>Generate a new image</button>
-        </form>
-        <span className="Meme-img-container">
-          <img src={imageSrc} alt={imageName} className="Meme-img" />
-          <p className="meme-imgText">{firstName}</p>
-          <p className="meme-imgText">{laststName}</p>
-        </span>
-      </main>
-    );
-  
+        </label>
+        <button className="Meme-btn">Generate a new image</button>
+      </form>
+      <div className="Meme-img-container">
+        <img src={randomImg} alt="random-Img" className="Meme-img" />
+        <p className="meme-imgText-top">{topText}</p>
+        <p className="meme-imgText-bottom">{bottomText}</p>
+      </div>
+    </main>
+  );
 }
 
 export default MemeGenerator;

@@ -1,12 +1,12 @@
-import Header from "./components/Header/Header"
+import React from "react";
 import MemeGenerator from "./components/MemeMain/MemeGenerator";
 
 function App() {
+
   return (
-    <>
-      <Header />
-      <MemeGenerator />
-    </>
+    <div>
+      <MemeGenerator  />
+    </div>
   );
 }
 
