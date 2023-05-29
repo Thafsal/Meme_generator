@@ -47,18 +47,18 @@ function MemeGenerator(ref) {
         buttonReset={resetText}
       />
       <form onSubmit={handleSubmit} className="Meme-form">
-        <label htmlFor="topText">
+        <label htmlFor="topText" className="Meme-textarea">
           <input
-            className="Meme-textarea"
+            className="Meme-input"
             type="text"
             value={topText}
             name="topText"
             onChange={handleChange}
           />
         </label>
-        <label htmlFor="bottomText">
+        <label htmlFor="bottomText" className="Meme-textarea">
           <input
-            className="Meme-textarea"
+            className="Meme-input"
             type="text"
             value={bottomText}
             name="bottomText"
